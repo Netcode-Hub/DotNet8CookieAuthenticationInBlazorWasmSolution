@@ -1,0 +1,39 @@
+﻿@page "/"
+@using BlazorAppWASM.Authentications
+@using Microsoft.AspNetCore.Components.Authorization
+@using BlazorAppWASM.Authentications
+@inject AuthenticationStateProvider authStateProvider
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+<br />
+
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>Hello @context.User.Identity.Name</Authorized>
+    <Authorizing>I am checking up...</Authorizing>
+    <NotAuthorized> You are not authorized</NotAuthorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+<EditForm Model="LoginModel" OnSubmit="Login">
+    <InputText @bind-Value="LoginModel.Email" class="form-control"></InputText>
+    <input class="form-control" type="password" @bind="LoginModel.Password" />
+    <button class="btn btn-primary" type="submit"> Login </button>
+</EditForm>
+
+
+@code {
+    LoginModel LoginModel = new();
+    protected async override Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task Login()
+    {
+        var customAuthProvider = (CookieAuthenticationStateProvider)authStateProvider;
+        await customAuthProvider.LoginAndGetAuthenticationState(LoginModel);
+    }
+
+}
